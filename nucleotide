@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+import sys
+import re
+from argparse import ArgumentParser
+
+# Argument parser
+parser = ArgumentParser(description='Compute nucleotide composition percentage for a DNA or RNA sequence.')
+parser.add_argument("-s", "--seq", type=str, required=True, help="Input DNA or RNA sequence")
+parser.add_argument("-m", "--motif", type = str, required = False, help = "Motif")
+
+# Display help message if no arguments are provided
+
+if len(sys.argv) == 1:
+    parser.print_help()
+    sys.exit(1)
+
+args = parser.parse_args()
+sequence = args.seq.upper()  # Convert sequence to uppercase
+
+# First, classify the sequence (DNA or RNA)
+
+def search_DNA_RNA(seq):
+	if 'T' and 'U' in seq:
+		return "The sequence cannot contain both T and U"
+	elif 'T' in seq:
+		return "The sequence is DNA"
+	elif 'U' in seq:
+		return "The sequence is RNA"
+	elif re.fullmatch(r'^[ACG]+$', seq): # This is ambigous because it does not contain either T or U
+		return "I am not sure...The sequence can be either DNA or RNA"
+	else: # If there are numbers... or other symbol
+		return "The sequence is not DNA nor RNA"
+print(search_DNA_RNA(args.seq))
+seqClass = search_DNA_RNA(args.seq)
+
+# Then, compute nucleotide percentage
+def nucleotide_percentage(seq):
+	length = len(seq)
+	count = {nuc: seq.count(nuc) for nuc in set(seq)}
+	percentage = {nuc: (count/length)*100 for nuc, count in count.items()}
+	return percentage
+
+if seqClass == "DNA" or "RNA":
+	percentage = nucleotide_percentage(args.seq)
+
+	print(percentage)
+else:
+	print("Error: Input not valid")
