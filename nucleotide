@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# This script is created by Claudia Moreno Fernandez-Aliseda (17/03/2025)
 import sys
 import re
 from argparse import ArgumentParser
